@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block nav %}
 
     {% if request.user.is_authenticated %}
@@ -33,6 +35,11 @@
                 {{ tag.name }} {% if  not forloop.last %},{% endif %}
             {% endfor %}</p>
             <p class="card-text">{{ article.content }}</p>
+
+            <p id="p{{ article.pk }}">{{ article.get_article_likes_count}}</p>
+                    {% if request.user.is_authenticated %}
+                        <button onclick="buttonClick(event)" id="button{{ article.pk }}" data-id="{{ article.pk }}" data-index-link="{% url 'webapp:art_like' article.pk %}">Like</button>
+                    {% endif %}
         </div>
     </div>
     <h3 class="ms-3">Comments:</h3>
@@ -43,6 +50,11 @@
                 <div class="card text-bg-light mb-3">
                     <div class="card-body">
                         <p class="card-text">{{ comment.text }}</p>
+                    <p id="p{{ comment.pk }}">{{ comment.get_comment_like_count }}</p>
+                    {% if request.user.is_authenticated %}
+                        <button onclick="buttonClick(event)" id="button{{ comment.pk }}" data-id="{{ comment.pk }}" data-index-link="{% url 'webapp:com_like' comment.pk %}">Like</button>
+                    {% endif %}
+
 
                         <div class="d-flex justify-content-around">
                             {% if perms.webapp.change_comment or comment.author == request.user %}

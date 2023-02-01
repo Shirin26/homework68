@@ -1,4 +1,6 @@
-    <h1>Articles</h1>
+{% load static %}
+
+<h1>Articles</h1>
     <div class="row">
         {% for article in articles %}
             <div class="col-4 my-3">
@@ -10,6 +12,11 @@
                             {{ tag.name }} {% if  not forloop.last %},{% endif %}
                         {% endfor %}</p>
                         <a href="{{ article.get_absolute_url }}" class="btn btn-primary">Подробнее...</a>
+                        <p id="p{{ article.pk }}">{{ article.get_article_likes_count }}</p>
+
+                    {% if request.user.is_authenticated %}
+                        <button onclick="buttonClick(event)" id="button{{ article.pk }}" data-id="{{ article.pk }}" data-index-link="{% url 'webapp:art_like' article.pk %}">Like</button>
+                    {% endif %}
                     </div>
                 </div>
             </div>

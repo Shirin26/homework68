@@ -5,16 +5,19 @@ from django.utils.http import urlencode
 from webapp.models import Article
 from webapp.forms import ArticleForm, SimpleSearchForm, ArticleDeleteForm
 from django.http import JsonResponse
-
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 
 
-class TestView(View):
+class ArticleLikeView(View):
     def get(self, request, *args, **kwargs):
-        # response = JsonResponse({'test': 2, 'test2': [1,2,3]})
-        response = JsonResponse({'error': 'qweqweqweqwwe'})
-        response.status_code =400
-
+        article = get_object_or_404(Article, pk=kwargs.get('pk'))
+        if request.user in article.article_likes.all():
+            article.article_likes.remove(request.user)
+        else:
+            article.article_likes.add(request.user)
+        likes_amount = article.article_likes.count()
+        response = JsonResponse({'likes_amount': likes_amount})
         return response
 
 

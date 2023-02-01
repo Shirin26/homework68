@@ -1,8 +1,6 @@
 from django.db import models
 from django.urls import reverse
-from django.conf import settings
 from django.contrib.auth import get_user_model
-
 from webapp.validate import at_least_8
 
 
@@ -22,6 +20,7 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Время изменения")
     tags = models.ManyToManyField('webapp.Tag', related_name='articles', blank=True)
+    article_likes = models.ManyToManyField(get_user_model(), related_name='article_likes', blank=True)
 
     class Meta:
         permissions = [
@@ -33,6 +32,9 @@ class Article(models.Model):
 
     def get_comments_count(self):
         return self.comments.count()
+
+    def get_article_likes_count(self):
+        return self.article_likes.count()
 
     def __str__(self):
         return f'{self.pk}. {self.title}'
@@ -46,6 +48,11 @@ class Comment(models.Model):
                                verbose_name="Автор")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Время изменения")
+    comment_likes = models.ManyToManyField(get_user_model(), related_name='comment_likes', blank=True)
+
+    def get_comment_like_count(self):
+        return self.comment_likes.count()
+
 
     def __str__(self):
         return f'{self.pk}. {self.text[:20]}'
